@@ -1,0 +1,42 @@
+---
+import { Image } from "astro:assets";
+interface Props {
+  evento: any;
+}
+
+const { evento } = Astro.props;
+---
+
+<a
+  target="_blank"
+  href={evento.UrlDestino}
+  class="flex flex-col relative cursor-pointer rounded-b-xl shadow-xl mb-8 w-[300px]"
+>
+  <div
+    class="absolute top-1 left-1 bg-white px-2 rounded-full font-semibold text-xs"
+  >
+    {evento.Identificador}
+  </div>
+  <Image
+    class="h-[160px] w-full rounded-xl"
+    src={`data:image/png;base64,${evento.Background}`}
+    alt="A bird sitting on a nest of eggs."
+    width={1000}
+    height={400}
+  />
+  <div class="p-3 flex flex-col gap-1">
+    <span class="text-red-700 text-sm">{evento.Data}</span>
+    <h5 class="text-base uppercase">
+      {evento.Numeracao}º {evento.Titulo}
+    </h5>
+    <small class="text-stone-400 mb-2">
+      {
+        evento.Valor.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+          style: "currency",
+          currency: "BRL",
+        })
+      }
+    </small>
+  </div>
+</a>

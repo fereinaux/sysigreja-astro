@@ -1,0 +1,179 @@
+---
+import Evento from "../components/Evento.astro";
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+const res = await fetch(
+  "https://trindade.iecbeventos.com.br/Inscricoes/GetEventosInscricao/?type=Inscri%C3%A7%C3%B5es&identificador=Catedral da Trindade&search=&isMobile=false"
+);
+const data = await res.json();
+const nextEvento = data.Eventos[0];
+data.Eventos = data.Eventos.splice(1);
+const Abertos = data.Eventos.filter(
+  (evento: any) =>
+    evento.Status === "Aberto" || evento.StatusEquipe === "Aberto"
+);
+const EmBreve = data.Eventos.filter(
+  (evento: any) =>
+    evento.Status === "Em Breve" || evento.StatusEquipe === "Em Breve"
+);
+const Informativos = data.Eventos.filter(
+  (evento: any) =>
+    evento.Status === "Informativo" || evento.StatusEquipe === "Informativo"
+);
+---
+
+<Layout title="Inscrições">
+  <main class="bg-white flex flex-col min-h-screen h-auto gap-3 p-10">
+		<div class="flex flex-col mx-auto w-[70%]">
+			<div class="h-[50px]">
+				<!-- <Image alt="Logo Igreja" width={50} height={50} src={``} /> -->
+				<h4 class="text-lg text-stone-700 font-black">INSCRIÇÕES</h4>
+			</div>
+      <h1 class="text-3xl font-black text-stone-700 mb-2">PRÓXIMO EVENTO</h1>
+      <!-- #region proxEvento -->
+      <a
+        target="_blank"
+        href={nextEvento.UrlDestino}
+        class="flex cursor-pointer rounded-e-xl shadow-xl mb-8 relative"
+      >
+        <Image
+          class="h-[410px] w-[70%] rounded-xl"
+          src={`data:image/png;base64,${nextEvento.Background}`}
+          alt="A bird sitting on a nest of eggs."
+          width={1000}
+          height={400}
+        />
+        <div
+          class="absolute top-1 left-1 bg-white px-2 rounded-full font-semibold text-xs"
+        >
+          {nextEvento.Identificador}
+        </div>
+        <div class="py-10 px-6 flex flex-col gap-1">
+          <span class="text-red-700">{nextEvento.Data}</span>
+          <h5 class="text-3xl uppercase">
+            {nextEvento.Numeracao}º {nextEvento.Titulo}
+          </h5>
+          <small class="text-stone-400"
+            >{
+              nextEvento.Valor.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                style: "currency",
+                currency: "BRL",
+              })
+            }</small
+          >
+          <button
+            class="mt-auto w-32 p-1 text-sm align-middle text-center uppercase text-red-700 outline-1 outline outline-red-700 hover:text-white hover:bg-red-700 transition-all duration-300"
+            >VER DETALHES</button
+          >
+        </div>
+      </a>
+      <!-- #endregion -->
+      <!-- #region abertas -->
+      {
+        Abertos.length > 0 && (
+          <>
+            <h2 class="text-2xl font-black text-stone-700 mb-2">
+              INSCRIÇÕES ABERTAS
+            </h2>
+            <div class="flex flex-wrap gap-3">
+              {Abertos.map((evento: any) => (
+                <Evento evento={evento} />
+              ))}
+            </div>
+          </>
+        )
+      }
+      <!-- #endregion -->
+      <!-- #region emBreve -->
+      {
+        EmBreve.length > 0 && (
+          <>
+            <h2 class="text-2xl font-black text-stone-700 mb-2">
+              INSCRIÇÕES EM BREVE
+            </h2>
+            <div class="flex flex-wrap gap-3">
+              {EmBreve.map((evento: any) => (
+                <a
+                  target="_blank"
+                  href={evento.UrlDestino}
+                  class="flex flex-col relative cursor-pointer rounded-b-xl shadow-xl mb-8 w-[300px]"
+                >
+                  <div class="absolute top-1 left-1 bg-white px-2  rounded-full font-semibold text-xs">
+                    {evento.Identificador}
+                  </div>
+                  <Image
+                    class="h-[160px] w-full rounded-xl"
+                    src={`data:image/png;base64,${evento.Background}`}
+                    alt="A bird sitting on a nest of eggs."
+                    width={1000}
+                    height={400}
+                  />
+                  <div class="p-3 flex flex-col gap-1">
+                    <span class="text-red-700 text-sm">{evento.Data}</span>
+                    <h5 class="text-base uppercase">
+                      {evento.Numeracao}º {evento.Titulo}
+                    </h5>
+                    <small class="text-stone-400 mb-2">
+                      {evento.Valor.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </small>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </>
+        )
+      }
+      <!-- #endregion -->
+      <!-- #region info -->
+      {
+        Informativos.length > 0 && (
+          <>
+            <h2 class="text-2xl font-black text-stone-700 mb-2">
+              INFORMATIVOS
+            </h2>
+            <div class="flex flex-wrap gap-3">
+              {Informativos.map((evento: any) => (
+                <a
+                  target="_blank"
+                  href={evento.UrlDestino}
+                  class="flex flex-col relative cursor-pointer rounded-b-xl shadow-xl mb-8 w-[300px]"
+                >
+                  <div class="absolute top-1 left-1 bg-white px-2  rounded-full font-semibold text-xs">
+                    {evento.Identificador}
+                  </div>
+                  <Image
+                    class="h-[160px] w-full rounded-xl"
+                    src={`data:image/png;base64,${evento.Background}`}
+                    alt="A bird sitting on a nest of eggs."
+                    width={1000}
+                    height={400}
+                  />
+                  <div class="p-3 flex flex-col gap-1">
+                    <span class="text-red-700 text-sm">{evento.Data}</span>
+                    <h5 class="text-base uppercase">
+                      {evento.Numeracao}º {evento.Titulo}
+                    </h5>
+                    <small class="text-stone-400 mb-2">
+                      {evento.Valor.toLocaleString("pt-BR", {
+                        minimumFractionDigits: 2,
+                        style: "currency",
+                        currency: "BRL",
+                      })}
+                    </small>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </>
+        )
+      }
+      <!-- #endregion -->
+    </div>
+  </main>
+</Layout>
